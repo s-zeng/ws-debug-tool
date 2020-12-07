@@ -15,10 +15,10 @@ optional arguments:
   --no-colour  strips colour from output - useful for piping to files
 ```
 
-Example:
+# Example
 
 ```sh
-$ ./ws-debug-tool.py
+$ ./ws-debug-tool.py wss://echo.websocket.org
 Execution time: 0.006s | ---- SETUP START ----
 echo.websocket.org 443
 Execution time: 0.097s | [SENDING WS INITIATE REQUEST]:
