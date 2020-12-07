@@ -1,7 +1,7 @@
 import base64
-import os
-import itertools
 import hashlib
+import itertools
+import os
 from typing import Sequence, Union
 
 """

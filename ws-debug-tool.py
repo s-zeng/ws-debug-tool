@@ -1,13 +1,14 @@
 #!/usr/bin/python3
-import socket
-import time
-import os
-import logging
-import threading
-import atexit
 import argparse
+import atexit
+import logging
+import os
+import socket
 import ssl
+import threading
+import time
 import urllib.parse
+
 import WebsocketUtils
 
 start_time = time.time()
