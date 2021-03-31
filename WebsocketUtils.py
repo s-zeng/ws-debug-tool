@@ -2,6 +2,7 @@ import base64
 import hashlib
 import itertools
 import os
+from collections import defaultdict
 from typing import Sequence, Union
 
 """
@@ -127,25 +128,17 @@ def generate_request(request_str: Union[bytes, str]) -> bytes:
 
 # this is a dict that maps opcodes to the type of message that it represents (see rfc6455)
 # e.g. opcode 0 is continuation frame, opcode 0x0a (10) is pong, etc.
-# i know i just said that it's a dict, but really, a dict where the keys are integers is just an array, so this is an array...
-opcode_deref = [
-    "Continuation Frame",
-    "Text Frame",
-    "Binary Frame",
-    "RESERVED",
-    "RESERVED",
-    "RESERVED",
-    "RESERVED",
-    "RESERVED",
-    "Connection Close",
-    "Ping",
-    "Pong",
-    "RESERVED",
-    "RESERVED",
-    "RESERVED",
-    "RESERVED",
-    "RESERVED",
-]
+opcode_deref = defaultdict(
+    lambda: "RESERVED",
+    {
+        0: "Continuation Frame",
+        1: "Text Frame",
+        2: "Binary Frame",
+        8: "Connection Close",
+        9: "Ping",
+        10: "Pong",
+    },
+)
 
 # dict that maps connection close status codes to their meanings (see rfc6455)
 status_code_dict = {

@@ -67,11 +67,9 @@ class WebSocket:
 
     Uses only standard library methods and classes, and adheres to the rfc 6455 ws specs at https://tools.ietf.org/html/rfc6455
     Why rewrite a websocket library when plenty of good ones exists for python already? A few reasons:
-        a) None of the existing libraries I found seemed to be able to properly handle our format for subscriptions (at least in my experience, perhaps its my fault for not using them properly)
-        b) pip servers seem to have unreliable dns, so there was a lengthy period of time in which I was unable to download any external libraries (esp. while I was writing this)
-        c) educational purposes
-        d) to have a class that we can rely on with no external dependenies or licensing issues
-        e) HEADERS! None of the websocket libraries I've found allowed for proper inspection of the websocket headers
+        a) educational purposes
+        b) to have a class that we can rely on with no external dependenies or licensing issues
+        c) HEADERS! None of the websocket libraries I've found allowed for proper inspection of the websocket headers
     """
 
     def __init__(self, host: str, port: int, enable_ssl: bool) -> None:
@@ -442,22 +440,15 @@ class WebSocket:
 
     def clean_up(self) -> None:
         """
-        Given a list of subscriptions, sends messages through the websocket to unsubscribe from them
-
-        Mirror of self.send_batch essentially
-
-        @param subscriptions: a list containing subscriptions to unsubscribe
-        @param replacements: a list detailing how to turn given subscriptions into unsubscriptions
-                             replacements[0] is the substring to replace in each subscription
-                             replacements[1] is what to replace that substring with
+        Closes the websocket in a clean manner
         """
-        # set the socket to blocking for cleaning up to guarentee getting server replys to unsubs and such
+        # set the socket to blocking for cleaning up to guarantee getting server reply to close connection frame
         self.socket.setblocking(True)
 
         # check if program exited because of a close connection frame
-        # if thats the case, then the connection is closed and we shouldn't bother sending unsubs
+        # if thats the case, then the connection is closed and we shouldn't bother reclosing
         if not self.recieved_close_connection:
-            _colour_log("---- Exiting, sending unsubs ----")
+            _colour_log("---- Now exiting... ----")
             try:
                 # we send in the websocket byte code for a masked 'Close Connection (normal)'
                 close_connection_frame = WebsocketUtils.close_connection
@@ -467,13 +458,13 @@ class WebSocket:
 
                 # we then try to read the final reply from the server
                 _colour_log("Receiving close connection frame: ")
-                # magic number here since rfc6455 spec says server should reply with
+                # magic number 4 here since rfc6455 spec says server should reply with
                 # a particular 4 byte long message (aka b'\x88\x02\x03\xe8')
                 print(WebsocketUtils.ws_pretty_format(self.read_blocking(4)))
 
             except OSError as e:
                 log.error(
-                    "OSError - socket seems to be closed? Unsubscribing incomplete"
+                    "OSError - socket seems to be closed?"
                 )
                 raise (e)
 
