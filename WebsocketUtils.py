@@ -84,11 +84,6 @@ def generate_request(request_str: Union[bytes, str]) -> bytes:
     # satisfies all current use cases, with the exception of pong responses to ping requests from the server.
     # note that while are breaking rfc6455 by not sending pong responses, this doesn't seem to affect the connection in anyway,
     # since rfc6455 is ambiguous on the consequences of missed pongs and our current server implementation doesn't do anything about it
-    # TODO: implement proper ping/pong handling. this is probably most easily done in the main classes interactive_mode() method
-    # an addendum - it seems like ping requests from cenx servers aren't proper ping requests (opcode 0x09)
-    # but just regular text data messages (opcode 0x01) with "ws-ping" as a payload...
-    # as such, proper ping/pong handling on my side can't be implemented until proper ping/pong handling
-    # is implemented server side!
     ws_header = [129]
 
     # Payload length management. See sec5.2/Payload length of rfc6455
