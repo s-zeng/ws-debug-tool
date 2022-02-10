@@ -73,12 +73,6 @@ class WebSocket:
     """
 
     def __init__(self, host: str, port: int, enable_ssl: bool) -> None:
-        """
-        Init method
-
-        @param host: the host ip/domain to connect to, e.g. 'websocketstest.com'
-        @param port: the port that we are connecting to. usually identical to the http port e.g. '80'
-        """
         # we use AF_INET in the socket protocol argument because we're communicating via ipv4
         # if we want to support ipv6 in the future, we will need to change this
 
@@ -499,7 +493,7 @@ if __name__ == "__main__":
         port = 443
     elif parsed.scheme == "ws":
         do_ssl = False
-        port = 8080
+        port = 80
     else:
         print(f"Improper scheme: given {parsed.scheme}, expected 'ws' or 'wss'")
         exit(0)
