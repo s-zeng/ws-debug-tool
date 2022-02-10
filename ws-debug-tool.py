@@ -76,8 +76,8 @@ class WebSocket:
         """
         Init method
 
-        @param host: the host ip/domain to connect to, e.g. 'tools01-qa-integration.cenx.localnet'
-        @param port: the port that we are connecting to. usually identical to the http port e.g. '8080'
+        @param host: the host ip/domain to connect to, e.g. 'websocketstest.com'
+        @param port: the port that we are connecting to. usually identical to the http port e.g. '80'
         """
         # we use AF_INET in the socket protocol argument because we're communicating via ipv4
         # if we want to support ipv6 in the future, we will need to change this
