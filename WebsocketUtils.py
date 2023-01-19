@@ -3,7 +3,7 @@ import hashlib
 import itertools
 import os
 from collections import defaultdict
-from typing import Sequence, Union
+from typing import Sequence
 
 """
 Helper module for the websocket debug tool.
@@ -57,17 +57,21 @@ def xor(data: Sequence[int], key: Sequence[int]) -> bytes:
     return bytes(a ^ b for a, b in zip(data, itertools.cycle(key)))
 
 
-def generate_request(request_str: Union[bytes, str]) -> bytes:
+def generate_request(request_str: bytes | str) -> bytes:
     """
-    Method that does the grunt work of forming the websocket request, adhering to rfc6455 as strictly as possible
+    Does the grunt work of forming the websocket request, adhering to rfc6455
+    as strictly as possible
 
-    Forms the appropriate websocket protocol header (including appropriate handling of payload length in the header,
-    as well as inclusion of the masking key), then attaches the masked payload at the end.
-    See section 5 (particularly 5.2) of rfc6455 for details: https://tools.ietf.org/html/rfc6455#section-5
+    Forms the appropriate websocket protocol header (including appropriate
+    handling of payload length in the header, as well as inclusion of
+    the masking key), then attaches the masked payload at the end.
 
-    @param request_str: payload of ws request
+    See section 5 (particularly 5.2) of rfc6455 for details:
+    https://tools.ietf.org/html/rfc6455#section-5
 
-    @return: a properly encoded websocket request with the given payload
+    @param request_str: payload of ws request as either a string or bytes
+
+    @return: a properly encoded raw websocket request with the given payload
     """
 
     # Note that we are not fully rfc6455 compliant here for all possible ws communications, in that we are making the following assumptions:
@@ -94,7 +98,7 @@ def generate_request(request_str: Union[bytes, str]) -> bytes:
         # note that we are adding 128 to the payload lengh to set the mask bit to 1 (payload length is only 7 bits, the first bit of the byte is the mask bit)
         ws_header.append(payload_length + 128)
     elif (
-        126 <= payload_length < 2 ** 16
+        126 <= payload_length < 2**16
     ):  # 126 in the length field signifies extended 2 byte payload in the next two bytes
         # splits the 16 bit length into two seperate bytes to allow the method bytes(ws_header) to work
         # a payload length of 126 specifies a 16 bit extended length, so we set the main payload length header to 126 + 128 = 254 (setting the mask bit too)
@@ -155,14 +159,17 @@ status_code_dict = {
 
 def ws_pretty_format(raw_data: bytes) -> str:
     """
-    Given a raw websocket transaction, this method parses that data and turns it into a human readable message
+    Given a raw websocket transaction, this method parses that data and turns
+    it into a human readable message
 
-    Follows rfc6455 as exactly as possible; pretty much does generate_request() but backwards
+    Follows rfc6455 as exactly as possible; pretty much does generate_request()
+    but backwards
 
     @param data: the websocket data to parse
 
     @return: the websocket message formatted as a printable string
     """
+
     # we start by turning the data into a list which we can pop elements off of
     data = list(raw_data)
 
@@ -261,10 +268,22 @@ def byte_list_to_int(byte_list: Sequence[int]) -> int:
 
     @return: the integer which the list represents
     """
-    output = 0
-    for index, byte in enumerate(byte_list):
-        output += byte * (2 ** 8) ** (len(byte_list) - index - 1)
-    return output
+    return int.from_bytes(byte_list, byteorder="big")
+
+
+def int_to_byte_list(integer: int) -> list[int]:
+    """
+    Given an integer, returns a list of byte values representing the integer
+
+    E.g. 8405002
+    = [0x80, 0x40, 0x0a]
+    which we turn into: [128, 64, 10]
+
+    param integer: the integer to convert
+
+    @return: the list of byte values
+    """
+    return list(integer.to_bytes(length=4, byteorder="big"))
 
 
 def expected_sec_websocket_accept_header(key: str) -> str:

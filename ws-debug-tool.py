@@ -457,9 +457,7 @@ class WebSocket:
                 print(WebsocketUtils.ws_pretty_format(self.read_blocking(4)))
 
             except OSError as e:
-                log.error(
-                    "OSError - socket seems to be closed?"
-                )
+                log.error("OSError - socket seems to be closed?")
                 raise (e)
 
         self.socket.shutdown(socket.SHUT_WR)
