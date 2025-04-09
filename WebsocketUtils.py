@@ -213,7 +213,7 @@ def ws_pretty_format(raw_data: bytes) -> str:
         extended_len = byte_list_to_int(data[:bytes_in_len])
         data = data[bytes_in_len:]
 
-        output[-1] += f"(Extended {bytes_in_len*8} bit payload length)"
+        output[-1] += f"(Extended {bytes_in_len * 8} bit payload length)"
         output.append(f"Extended payload length: {extended_len}")
 
     # if mask bit is set, then we read the mask key and unmask the data here

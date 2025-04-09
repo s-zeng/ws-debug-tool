@@ -226,9 +226,9 @@ class WebSocket:
                     # form the pong message with the same payload as the ping, and send it through
                     # we turn it into a bytearray to make it mutable, then back to bytes for sending
                     pong = bytearray(WebsocketUtils.generate_request(payload))
-                    pong[
-                        0
-                    ] = 138  # generate_request uses the text frame opcode - here we replace that with the pong opcode
+                    pong[0] = (
+                        138  # generate_request uses the text frame opcode - here we replace that with the pong opcode
+                    )
                     pong = bytes(pong)
 
                     _colour_log("Recieved ping, sending pong: ")
